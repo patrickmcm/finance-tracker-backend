@@ -1,14 +1,20 @@
 package symbols
 
-import "net/http"
+import (
+	"database/sql"
+	"net/http"
+)
 
-type Route struct{}
+type Route struct {
+	db *sql.DB
+}
 
-func NewRoute() *Route {
-	return &Route{}
+func NewRoute(db *sql.DB) *Route {
+	return &Route{db: db}
 }
 
 func (route *Route) RegisterHandlers(mux *http.ServeMux) {
-	mux.HandleFunc("GET /api/v1/symbols", route.getSymbols)
-	mux.HandleFunc("GET /api/v1/symbols/{isin}/pricedata", route.getSymbolPriceData)
+	mux.HandleFunc("GET /api/v1/symbol/", route.getSymbol)
+	mux.HandleFunc("GET /api/v1/symbol/{ticker}", route.getSymbol)
+	mux.HandleFunc("GET /api/v1/symbol/{ticker}/pricedata", route.getSymbolPriceData)
 }

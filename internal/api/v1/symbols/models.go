@@ -2,17 +2,18 @@ package symbols
 
 import "time"
 
-type SymbolType int
+type SymbolType string
 
 const (
-	ETF SymbolType = iota
-	STOCK
+	ETF   SymbolType = "ETF"
+	STOCK            = "STOCK"
 )
 
 type MarketSymbol struct {
-	Isin       string     `json:"isin"`
-	FullName   string     `json:"fullName"`
 	Ticker     string     `json:"ticker"`
+	FullName   string     `json:"fullName"`
+	Currency   string     `json:"currency"`
+	Isin       string     `json:"isin"`
 	SymbolType SymbolType `json:"symbolType"`
 }
 
