@@ -1,9 +1,7 @@
 syntax = "proto3";
 package v1;
 
-import "google/protobuf/timestamp.proto";
-
-option go_package = "github.com/patrickmcm/finance-tracker-backend/api/v1/pb";
+option go_package = "github.com/patrickmcm/finance-tracker-backend/api/v1/market";
 
 message MarketInstrument {
   string ticker = 1;
