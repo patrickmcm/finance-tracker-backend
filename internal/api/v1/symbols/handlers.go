@@ -9,7 +9,7 @@ import (
 	"net/http"
 )
 
-func (route *Route) getSymbol(w http.ResponseWriter, r *http.Request) {
+func (route *Route) getInstrument(w http.ResponseWriter, r *http.Request) {
 	ticker := r.PathValue("ticker")
 	if ticker == "" {
 		w.WriteHeader(http.StatusBadRequest)
@@ -18,8 +18,24 @@ func (route *Route) getSymbol(w http.ResponseWriter, r *http.Request) {
 
 	rows, err := route.db.Query("SELECT * FROM instruments WHERE ticker =$1", ticker)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Println(err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer rows.Close()
+
+	instruments := util.GetTable[MarketSymbol](rows)
+
+	w.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(w).Encode(instruments)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func (route *Route) getInstruments(w http.ResponseWriter, r *http.Request) {
+	rows, err := route.db.Query("SELECT * FROM instruments")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 	defer rows.Close()

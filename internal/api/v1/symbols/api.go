@@ -14,7 +14,9 @@ func NewRoute(db *sql.DB) *Route {
 }
 
 func (route *Route) RegisterHandlers(mux *http.ServeMux) {
-	mux.HandleFunc("GET /api/v1/symbol/", route.getSymbol)
-	mux.HandleFunc("GET /api/v1/symbol/{ticker}", route.getSymbol)
-	mux.HandleFunc("GET /api/v1/symbol/{ticker}/pricedata", route.getSymbolPriceData)
+	mux.HandleFunc("GET /api/v1/instruments/", route.getInstruments)
+	mux.HandleFunc("GET /api/v1/instruments", route.getInstruments)
+
+	mux.HandleFunc("GET /api/v1/instruments/{ticker}", route.getInstrument)
+	mux.HandleFunc("GET /api/v1/instruments/{ticker}/pricedata", route.getSymbolPriceData)
 }

@@ -1,0 +1,24 @@
+syntax = "proto3";
+package v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/patrickmcm/finance-tracker-backend/api/v1/pb";
+
+message MarketInstrument {
+  string ticker = 1;
+  string name = 2;
+  string currency = 3;
+  string isin = 4;
+
+  enum InstrumentType {
+    ETF = 0;
+    STOCK = 1;
+  }
+
+  InstrumentType type = 5;
+}
+
+message Market {
+  repeated MarketInstrument market = 1;
+}
