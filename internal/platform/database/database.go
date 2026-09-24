@@ -1,32 +1,29 @@
 package database
 
 import (
-	"database/sql"
+	"context"
 	"finance-tracker-backend/internal/platform/config"
-	"github.com/lib/pq"
+	"fmt"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-func New(cfg *config.Config) (*sql.DB, error) {
-	dbCfg := pq.Config{
-		Host:     "localhost",
-		Port:     5432,
-		SSLMode:  pq.SSLModeDisable,
-		Database: "finance_tracker",
-		User:     cfg.DBUser,
-		Password: cfg.DBPass,
-	}
+func New(cfg *config.Config) (*pgxpool.Pool, error) {
+	ctx := context.Background()
 
-	connCfg, err := pq.NewConnectorConfig(dbCfg)
+	pool, err := pgxpool.New(ctx, fmt.Sprintf("user=%s password=%s dbname=finance_tracker sslmode=disable", cfg.DBUser, cfg.DBPass))
 	if err != nil {
 		return nil, err
 	}
 
-	db := sql.OpenDB(connCfg)
-
-	err = db.Ping()
+	conn, err := pool.Acquire(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return db, nil
+	err = conn.Ping(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return pool, nil
 }

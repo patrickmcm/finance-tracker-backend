@@ -1,13 +1,13 @@
 package main
 
 import (
-	instrumentsController "finance-tracker-backend/internal/modules/instruments/controller"
-	instrumentsService "finance-tracker-backend/internal/modules/instruments/service"
+	instrumentsController "finance-tracker-backend/internal/controllers/instruments"
 	"finance-tracker-backend/internal/platform/config"
 	"finance-tracker-backend/internal/platform/database"
 	"fmt"
 	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
 )
@@ -41,7 +41,9 @@ func (a *App) Start() error {
 
 	srv := grpc.NewServer()
 
-	instruments := instrumentsController.New(instrumentsService.New(db))
+	reflection.Register(srv)
+
+	instruments := instrumentsController.New(db)
 	instruments.RegisterController(srv)
 	err = srv.Serve(lis)
 	return err
