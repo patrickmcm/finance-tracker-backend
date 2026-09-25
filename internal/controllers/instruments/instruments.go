@@ -3,6 +3,7 @@ package instruments
 import (
 	"context"
 	pb "finance-tracker-backend/gen/api"
+	"finance-tracker-backend/gen/conv"
 	findb "finance-tracker-backend/gen/db"
 	"finance-tracker-backend/internal/platform/controllers"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -37,29 +38,25 @@ func (m *instrumentsServer) Get(ctx context.Context, instrumentReq *pb.GetInstru
 		return nil, status.Errorf(codes.NotFound, err.Error())
 	}
 
-	var instrumentType pb.Instrument_InstrumentType
+	converter := conv.ConverterImpl{}
+	convertedInstrument := converter.ConvertInstrument(instrument)
 
-	if instrument.Type == "ETF" {
-		instrumentType = pb.Instrument_ETF
-	} else {
-		instrumentType = pb.Instrument_STOCK
-	}
-
-	return &pb.Instrument{
-		Ticker:   instrument.Ticker,
-		Name:     instrument.Name,
-		Currency: instrument.Currency.String,
-		Isin:     instrument.Isin,
-		Type:     instrumentType,
-	}, nil
+	return &convertedInstrument, nil
 }
 
 func (m *instrumentsServer) List(ctx context.Context, _ *emptypb.Empty) (*pb.InstrumentCollection, error) {
-	return &pb.InstrumentCollection{Instruments: []*pb.Instrument{&pb.Instrument{
-		Ticker:   "VUAG",
-		Name:     "Vanguard S&P 500",
-		Currency: "GBX",
-		Isin:     "blah",
-		Type:     pb.Instrument_ETF,
-	}}}, nil
+	converter := conv.ConverterImpl{}
+
+	queries := findb.New(m.db)
+
+	instruments, err := queries.ListInstruments(ctx)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, err.Error())
+	}
+
+	instrumentsConv := converter.ConvertInstruments(instruments)
+
+	instrumentCollection := pb.InstrumentCollection{Instruments: instrumentsConv}
+
+	return &instrumentCollection, nil
 }
