@@ -1,4 +1,4 @@
-package v1
+package conv
 
 import (
 	pb "finance-tracker-backend/gen/api"

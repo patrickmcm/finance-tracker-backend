@@ -12,5 +12,5 @@ protoc --go_out=../../gen/api --go_opt=paths=source_relative --go-grpc_out=../..
 cd ../../ || exit
 sqlc generate
 
-cd ./api/v1 || exit
+cd ./internal/platform/conv || exit
 goverter gen ./
