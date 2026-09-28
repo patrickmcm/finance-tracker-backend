@@ -1,13 +1,13 @@
 package conv
 
 import (
-	pb "finance-tracker-backend/gen/api"
+	pb "finance-tracker-backend/gen/api/v1"
 	findb "finance-tracker-backend/gen/db"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
 // goverter:converter
-// goverter:output:file ../../gen/conv/generated.go
+// goverter:output:file ../../../gen/conv/generated.go
 // goverter:extend TextToString
 // goverter:enum:unknown @panic
 type Converter interface {

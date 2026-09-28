@@ -6,10 +6,10 @@ mkdir gen/api
 mkdir gen/conv
 mkdir gen/db
 
-cd ./protbufs/api/v1 || exit
-protoc --go_out=../../gen/api --go_opt=paths=source_relative --go-grpc_out=../../gen/api --go-grpc_opt=paths=source_relative instruments.proto
+cd ./protobufs/api/ || exit
+protoc --proto_path=./ --go_out=../../gen/api --go_opt=paths=source_relative --go-grpc_out=../../gen/api --go-grpc_opt=paths=source_relative v1/*.proto
 
-cd ../../../ || exit
+cd ../../ || exit
 sqlc generate
 
 cd ./internal/platform/conv || exit

@@ -2,7 +2,7 @@ package instruments
 
 import (
 	"context"
-	pb "finance-tracker-backend/gen/api"
+	pb "finance-tracker-backend/gen/api/v1"
 	"finance-tracker-backend/gen/conv"
 	findb "finance-tracker-backend/gen/db"
 	"finance-tracker-backend/internal/platform/controllers"
@@ -10,7 +10,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 type instrumentsServer struct {
@@ -44,7 +43,7 @@ func (m *instrumentsServer) Get(ctx context.Context, instrumentReq *pb.GetInstru
 	return &convertedInstrument, nil
 }
 
-func (m *instrumentsServer) List(ctx context.Context, _ *emptypb.Empty) (*pb.InstrumentCollection, error) {
+func (m *instrumentsServer) List(ctx context.Context, instrumentListReq *pb.ListInstrumentRequest) (*pb.InstrumentCollection, error) {
 	converter := conv.ConverterImpl{}
 
 	queries := findb.New(m.db)
