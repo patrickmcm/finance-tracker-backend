@@ -1,3 +1,6 @@
 [submodule "finance-tracker-protobufs"]
 	path = finance-tracker-protobufs
 	url = https://github.com/patrickmcm/finance-tracker-protobufs
+[submodule "protobufs"]
+	path = protobufs
+	url = https://github.com/patrickmcm/finance-tracker-protobufs
