@@ -1,8 +1,10 @@
 package main
 
 import (
+	"finance-tracker-backend/internal/controllers/instrumentprices"
 	instrumentsController "finance-tracker-backend/internal/controllers/instruments"
 	"finance-tracker-backend/internal/platform/config"
+	"finance-tracker-backend/internal/platform/controllers"
 	"finance-tracker-backend/internal/platform/database"
 	"fmt"
 	_ "github.com/lib/pq"
@@ -15,16 +17,19 @@ import (
 func main() {
 	cfg := config.LoadConfig()
 
-	app := NewApp(cfg)
+	ctrls := []controllers.Controller{&instrumentsController.Server{}, &instrumentprices.Server{}}
+
+	app := NewApp(cfg, ctrls)
 	log.Fatal(app.Start())
 }
 
 type App struct {
-	cfg *config.Config
+	cfg   *config.Config
+	ctrls []controllers.Controller
 }
 
-func NewApp(cfg *config.Config) *App {
-	return &App{cfg: cfg}
+func NewApp(cfg *config.Config, ctrls []controllers.Controller) *App {
+	return &App{cfg: cfg, ctrls: ctrls}
 }
 
 func (a *App) Start() error {
@@ -43,8 +48,10 @@ func (a *App) Start() error {
 
 	reflection.Register(srv)
 
-	instruments := instrumentsController.New(db)
-	instruments.RegisterController(srv)
+	for _, v := range a.ctrls {
+		v.RegisterController(srv, db)
+	}
+
 	err = srv.Serve(lis)
 	return err
 }

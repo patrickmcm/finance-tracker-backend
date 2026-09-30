@@ -16,7 +16,7 @@ with psycopg.connect("dbname=finance_tracker user=test password=test") as conn:
 
         testTickers = ['VUAG.L', 'CSH2.L']
 
-        data = yf.download(tickers, period='5d', group_by='ticker', keepna=False)
+        data = yf.download(tickers, period='5y', interval='1wk', group_by='ticker', keepna=False)
 
         formattedData = dict()
         for tickerName in tickers:
